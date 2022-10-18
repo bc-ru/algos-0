@@ -1,7 +1,7 @@
-import pygame
-import sys
-import random
 import math
+import random
+import sys
+import pygame
 
 dtheta = math.pi / 4
 ratio = 0.7

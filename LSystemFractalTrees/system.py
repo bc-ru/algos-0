@@ -10,11 +10,25 @@ import math
 
 # L Systems generate sentences, translate sentences into geometric structures
 # Axiom: initial string
-# produciton rules: generates longer strings 
+# produciton rules: generates longer strings
 # translate into geo structures
 
+
 class LSystem():
-    def __init__(self, axiom, rules, dtheta, start, length, ratio):
+    """This class represents LSystem logic and define main funcs
+    """
+
+    def __init__(self, axiom: str, rules: dict, dtheta: float, start: tuple[int, int], length: int, ratio: float):
+        """Initialize an object of a class
+
+        Args:
+            axiom (str): LSystem Sentence (initial string)
+            rules (dict): Generates longer strings from the initial strings
+            dtheta (float): delta angle for rotation 
+            start (tuple[int, int]): Start pos coordinates
+            length (int): "Draw forward" length
+            ratio (float): number for decreasing fractal so it can fit on a screen
+        """
         self.sentence = axiom
         self.rules = rules
         self.theta = math.pi / 2
@@ -25,10 +39,17 @@ class LSystem():
         self.ratio = ratio
         self.positions = []
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Return initial string of LSystem
+
+        Returns:
+            string: Initial string of LSystem
+        """
         return self.sentence
 
     def generate(self):
+        """Generates new fractal iteration
+        """
         self.x, self.y = self.start
         self.theta = math.pi / 2
         self.length *= self.ratio
@@ -42,27 +63,37 @@ class LSystem():
             newStr += mapped
         self.sentence = newStr
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.display.surface):
+        """Draws the fractal
+
+        Args:
+            screen (pygame.display.surface): pygame surface to draw an picture
+        """
         color = 0
         dcolor = 255 / len(self.sentence)
         for char in self.sentence:
             if char == 'F' or char == 'G':
                 x2 = self.x - self.length * math.cos(self.theta)
                 y2 = self.y - self.length * math.sin(self.theta)
-                pygame.draw.line(screen, (255 - color, color, 125 + dcolor / 2), (self.x, self.y), (x2, y2))
+                pygame.draw.line(screen, (255 - color, color,
+                                 125 + dcolor / 2), (self.x, self.y), (x2, y2))
                 self.x, self.y = x2, y2
             elif char == '+':
                 self.theta += self.dtheta
             elif char == '-':
                 self.theta -= self.dtheta
             elif char == '[':
-                self.positions.append({'x' : self.x, 'y' : self.y, 'theta' : self.theta})
+                self.positions.append(
+                    {'x': self.x, 'y': self.y, 'theta': self.theta})
             elif char == ']':
                 position = self.positions.pop()
                 self.x, self.y, self.theta = position['x'], position['y'], position['theta']
             color += dcolor
 
+
 def main():
+    """_summary_
+    """
     l_sys_text = sys.argv[1]
     pygame.init()
     size = int(sys.argv[2]), int(sys.argv[3])
@@ -91,5 +122,6 @@ def main():
                 system.generate()
         pygame.display.flip()
     pygame.quit()
+
 
 main()
